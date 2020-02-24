@@ -263,7 +263,12 @@
     <link name="${prefix}wrist_3_link">
       <visual>
         <geometry>
-	  <mesh filename="package://tm_description/meshes/tm1100/visual/Wrist3.STL" />
+          <xacro:if value="${has_camera}">
+          <mesh filename="package://tm_description/meshes/tm1100/visual/Wrist3.STL" />
+          </xacro:if>
+          <xacro:unless value="${has_camera}">
+          <mesh filename="package://tm_description/meshes/tm1100/visual/Wrist3_no_camera.STL" />
+          </xacro:unless>
         </geometry>
 	<origin xyz="0 0 0.015" rpy="0 0 0"/>
         <material name="Grey">
@@ -272,7 +277,12 @@
       </visual>
       <collision>
         <geometry>
-	  <mesh filename="package://tm_description/meshes/tm1100/collision/wrist_3.STL" />
+          <xacro:if value="${has_camera}">
+	      <mesh filename="package://tm_description/meshes/tm1100/collision/wrist_3.STL" />
+          </xacro:if>
+          <xacro:unless value="${has_camera}">
+	      <mesh filename="package://tm_description/meshes/tm1100/collision/wrist_3_no_camera.STL" />
+          </xacro:unless>
         </geometry>
       </collision>
       
