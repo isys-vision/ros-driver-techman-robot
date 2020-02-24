@@ -58,7 +58,7 @@
     </inertial>
   </xacro:macro>
 
-  <xacro:macro name="tm1100_robot" params="prefix joint_limited">
+  <xacro:macro name="tm1100_robot" params="prefix joint_limited has_camera">
 
     <!-- transmission prefix -->
     <xacro:tm_arm_transmission prefix="${prefix}" />
