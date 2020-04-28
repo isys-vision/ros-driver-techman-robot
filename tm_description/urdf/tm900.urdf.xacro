@@ -110,10 +110,10 @@
       <origin xyz="0.0 0.0 ${shoulder_height}" rpy="${-0.5 * pi} 0.0 0.0" />
       <axis xyz="0 -1 0" />
       <xacro:unless value="${joint_limited}">
-        <limit lower="${-2.0 * pi}" upper="${2.0 * pi}" effort="150.0" velocity="3.15"/>
+        <limit lower="${-270. / 180. * pi}" upper="${270. / 180. * pi}" effort="150.0" velocity="${180 / 180. * pi}"/>
       </xacro:unless>
       <xacro:if value="${joint_limited}">
-        <limit lower="${-pi}" upper="${pi}" effort="150.0" velocity="3.15"/>
+        <limit lower="${-pi}" upper="${pi}" effort="150.0" velocity="${180 / 180. * pi}"/>
       </xacro:if>
       <dynamics damping="0.0" friction="0.0"/>
     </joint>
@@ -145,10 +145,10 @@
       <origin xyz="0.0 0.0 ${shoulder_offset}" rpy="0.0 0.0 ${-0.5 * pi}" />    
       <axis xyz="0 0 1" />
       <xacro:unless value="${joint_limited}">
-        <limit lower="${-1.5 * pi}" upper="${1.5 * pi}" effort="150.0" velocity="3.15"/>
+        <limit lower="${-180. / 180. * pi}" upper="${180. / 180. * pi}" effort="150.0" velocity="${180 / 180. * pi}"/>
       </xacro:unless>
       <xacro:if value="${joint_limited}">
-        <limit lower="${-pi}" upper="${pi}" effort="150.0" velocity="3.15"/>
+        <limit lower="${-pi}" upper="${pi}" effort="150.0" velocity="${180 / 180. * pi}"/>
       </xacro:if>
       <dynamics damping="0.0" friction="0.0"/>
     </joint>
@@ -180,12 +180,7 @@
       <child link = "${prefix}arm_2_link" />
       <origin xyz="${arm_1_length} 0.0 ${elbow_offset}" rpy="0.0 0.0 0.0" />
       <axis xyz="0 0 1" />
-      <xacro:unless value="${joint_limited}">
-        <limit lower="${-1.5 * pi}" upper="${1.5 * pi}" effort="150.0" velocity="3.15"/>
-      </xacro:unless>
-      <xacro:if value="${joint_limited}">
-        <limit lower="${-pi}" upper="${pi}" effort="150.0" velocity="3.15"/>
-      </xacro:if>
+      <limit lower="${-155. / 180. * pi}" upper="${155. / 180. * pi}" effort="150.0" velocity="${180 / 180. * pi}"/>
       <dynamics damping="0.0" friction="0.0"/>
     </joint>
     
@@ -216,10 +211,10 @@
       <origin xyz="${arm_2_length} 0.0 ${wrist_offset}" rpy="${0.5 * pi} 0.0 ${0.5 * pi}" />
       <axis xyz="0 1 0" />
       <xacro:unless value="${joint_limited}">
-        <limit lower="${-2.0 * pi}" upper="${2.0 * pi}" effort="28.0" velocity="3.2"/>
+        <limit lower="${-180. / 180. * pi}" upper="${180. / 180. * pi}" effort="28.0" velocity="${225. / 180. * pi}"/>
       </xacro:unless>
       <xacro:if value="${joint_limited}">
-        <limit lower="${-pi}" upper="${pi}" effort="28.0" velocity="3.2"/>
+        <limit lower="${-pi}" upper="${pi}" effort="28.0" velocity="${225. / 180. * pi}"/>
       </xacro:if>
       <dynamics damping="0.0" friction="0.0"/>
     </joint>
@@ -251,10 +246,10 @@
       <origin xyz="0.0 0.0 ${wrist_2_length}" rpy="${0.5 * pi} 0.0 0.0" />
       <axis xyz="0 1 0" />
       <xacro:unless value="${joint_limited}">
-        <limit lower="${-2.0 * pi}" upper="${2.0 * pi}" effort="28.0" velocity="3.2"/>
+        <limit lower="${-180. / 180. * pi}" upper="${180. / 180. * pi}" effort="28.0" velocity="${225. / 180. * pi}"/>
       </xacro:unless>
       <xacro:if value="${joint_limited}">
-        <limit lower="${-pi}" upper="${pi}" effort="28.0" velocity="3.2"/>
+        <limit lower="${-pi}" upper="${pi}" effort="28.0" velocity="${225. / 180. * pi}"/>
       </xacro:if>
       <dynamics damping="0.0" friction="0.0"/>
     </joint>
@@ -297,10 +292,10 @@
       <origin xyz="0.0 0.0 ${wrist_3_length}" rpy="0.0 0.0 0.0" />
       <axis xyz="0 0 1" />
       <xacro:unless value="${joint_limited}">
-        <limit lower="${-2.0 * pi}" upper="${2.0 * pi}" effort="28.0" velocity="3.2"/>
+        <limit lower="${-270. / 180. * pi}" upper="${270. / 180. * pi}" effort="28.0" velocity="${225. / 180. * pi}"/>
       </xacro:unless>
       <xacro:if value="${joint_limited}">
-        <limit lower="${-pi}" upper="${pi}" effort="28.0" velocity="3.2"/>
+        <limit lower="${-pi}" upper="${pi}" effort="28.0" velocity="${225. / 180. * pi}"/>
       </xacro:if>
       <dynamics damping="0.0" friction="0.0"/>
     </joint>
