@@ -4,14 +4,14 @@ project(tm_kinematics)
 add_compile_options(-std=c++11)
 
 find_package(catkin REQUIRED COMPONENTS 
-  roscpp geometry_msgs moveit_core moveit_ros_planning pluginlib tf_conversions
+  roscpp geometry_msgs moveit_core moveit_ros_planning moveit_kinematics pluginlib tf_conversions
 )
 
 
 catkin_package(
   INCLUDE_DIRS include
   LIBRARIES tm700_kin tm900_kin tm700_moveit_plugin tm900_moveit_plugin tm1100_kin tm1300_kin tm1100_moveit_plugin tm1300_moveit_plugin
-  CATKIN_DEPENDS roscpp geometry_msgs moveit_core moveit_ros_planning pluginlib tf_conversions
+  CATKIN_DEPENDS roscpp geometry_msgs moveit_core moveit_ros_planning moveit_kinematics pluginlib tf_conversions
 )
 
 
