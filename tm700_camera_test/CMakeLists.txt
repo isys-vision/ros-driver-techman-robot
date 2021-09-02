@@ -15,7 +15,7 @@ find_package(catkin REQUIRED COMPONENTS
   sensor_msgs
 )
 
-find_package(OpenCV 3 REQUIRED
+find_package(OpenCV REQUIRED
   COMPONENTS
     opencv_core
     opencv_imgproc

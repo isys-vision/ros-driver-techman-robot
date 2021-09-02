@@ -16,7 +16,7 @@ find_package(catkin REQUIRED COMPONENTS
   usb_cam
 )
 
-find_package(OpenCV 3 REQUIRED
+find_package(OpenCV REQUIRED
   COMPONENTS
     opencv_core
     opencv_imgproc
