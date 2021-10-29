@@ -188,26 +188,21 @@ bool TMKinematicsPlugin::checkConsistency(const KDL::JntArray& seed_state,
   return true;
 }
 
-bool TMKinematicsPlugin::initialize(const std::string &robot_description,
-                                     const std::string& group_name,
-                                     const std::string& base_frame,
-                                     const std::string& tip_frame,
-                                     double search_discretization)
+bool TMKinematicsPlugin::initialize(const moveit::core::RobotModel& robot_model,
+                                    const std::string& group_name, const std::string& base_frame,
+                                    const std::vector<std::string>& tip_frames,
+                                    double search_discretization)
+
 {
-  setValues(robot_description, group_name, base_frame, tip_frame, search_discretization);
-
-  ros::NodeHandle private_handle("~");
-  rdf_loader::RDFLoader rdf_loader(robot_description_);
-  const srdf::ModelSharedPtr &srdf = rdf_loader.getSRDF();
-  const urdf::ModelInterfaceSharedPtr &urdf_model = rdf_loader.getURDF();
-
-  if (!urdf_model || !srdf)
+  if (tip_frames.size() != 1)
   {
-    ROS_ERROR_NAMED("kdl","URDF and SRDF must be loaded for KDL kinematics solver to work.");
+    ROS_ERROR_NAMED("tm_kinematics", "Expecting exactly one tip frame.");
     return false;
   }
 
-  robot_model_.reset(new robot_model::RobotModel(urdf_model, srdf));
+  storeValues(robot_model, group_name, base_frame, tip_frames, search_discretization);
+
+  ros::NodeHandle private_handle("~");
 
   robot_model::JointModelGroup* joint_model_group = robot_model_->getJointModelGroup(group_name);
   if (!joint_model_group)
@@ -226,7 +221,7 @@ bool TMKinematicsPlugin::initialize(const std::string &robot_description,
 
   KDL::Tree kdl_tree;
 
-  if (!kdl_parser::treeFromUrdfModel(*urdf_model, kdl_tree))
+  if (!kdl_parser::treeFromUrdfModel(*robot_model_->getURDF(), kdl_tree))
   {
     ROS_ERROR_NAMED("kdl","Could not initialize tree object");
     return false;
