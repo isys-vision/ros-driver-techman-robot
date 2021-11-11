@@ -280,8 +280,6 @@ bool TMKinematicsPlugin::initialize(const moveit::core::RobotModel& robot_model,
 
   num_possible_redundant_joints_ = kdl_chain_.getNrOfJoints() - joint_model_group->getMimicJointModels().size() - (position_ik? 3:6);
 
-  // Check for mimic joints
-  bool has_mimic_joints = joint_model_group->getMimicJointModels().size() > 0;
   std::vector<unsigned int> redundant_joints_map_index;
 
   std::vector<kdl_kinematics_plugin::JointMimic> mimic_joints;
@@ -411,7 +409,7 @@ bool TMKinematicsPlugin::setRedundantJoints(const std::vector<unsigned int> &red
     ROS_ERROR_NAMED("kdl","This group cannot have redundant joints");
     return false;
   }
-  if(redundant_joints.size() > num_possible_redundant_joints_)
+  if(long(redundant_joints.size()) > num_possible_redundant_joints_)
   {
     ROS_ERROR_NAMED("kdl","This group can only have %d redundant joints", num_possible_redundant_joints_);
     return false;
@@ -602,7 +600,7 @@ bool TMKinematicsPlugin::searchPositionIK(const geometry_msgs::Pose &ik_pose,
   }
 
   KDL::JntArray jnt_seed_state(dimension_);
-  for(int i=0; i<dimension_; i++)
+  for(size_t i=0; i<dimension_; i++)
     jnt_seed_state(i) = ik_seed_state[i];
 
   solution.resize(dimension_);
@@ -665,7 +663,6 @@ bool TMKinematicsPlugin::searchPositionIK(const geometry_msgs::Pose &ik_pose,
                        jnt_pos_test(tm_joint_inds_start_+5));
     
     
-    uint16_t num_valid_sols;
     std::vector< std::vector<double> > q_ik_valid_sols;
     for(uint16_t i=0; i<num_sols; i++)
     {
@@ -798,7 +795,6 @@ bool TMKinematicsPlugin::getPositionFK(const std::vector<std::string> &link_name
                                         const std::vector<double> &joint_angles,
                                         std::vector<geometry_msgs::Pose> &poses) const
 {
-  ros::WallTime n1 = ros::WallTime::now();
   if(!active_)
   {
     ROS_ERROR_NAMED("kdl","kinematics not active");

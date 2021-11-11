@@ -180,7 +180,7 @@ namespace tm_kinematics {
 			return num_sols_qp56;
 		}
 
-		int inverse_q234(const double* T, const double* L0J1J6, const double* R10, double qp, double* L1J1J5, double* q234, const double* q_ref, bool isRA) {
+        int inverse_q234(const double* /*T*/, const double* L0J1J6, const double* R10, double qp, double* L1J1J5, double* q234, const double* q_ref, bool isRA) {
 			int num_sols_q234;
 			int isol;
 			double r, s, t;
