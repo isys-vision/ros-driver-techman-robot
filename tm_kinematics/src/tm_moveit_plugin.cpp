@@ -204,7 +204,7 @@ bool TMKinematicsPlugin::initialize(const moveit::core::RobotModel& robot_model,
 
   ros::NodeHandle private_handle("~");
 
-  robot_model::JointModelGroup* joint_model_group = robot_model_->getJointModelGroup(group_name);
+  const robot_model::JointModelGroup* joint_model_group = robot_model_->getJointModelGroup(group_name);
   if (!joint_model_group)
     return false;
   
