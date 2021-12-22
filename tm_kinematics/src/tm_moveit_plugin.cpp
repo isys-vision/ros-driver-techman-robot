@@ -95,7 +95,7 @@
 
 /* Author: Sachin Chitta, David Lu!!, Ugo Cupcic */
 
-#include <class_loader/class_loader.h>
+#include <class_loader/class_loader.hpp>
 
 //#include <tf/transform_datatypes.h>
 #include <tf_conversions/tf_kdl.h>
@@ -188,28 +188,23 @@ bool TMKinematicsPlugin::checkConsistency(const KDL::JntArray& seed_state,
   return true;
 }
 
-bool TMKinematicsPlugin::initialize(const std::string &robot_description,
-                                     const std::string& group_name,
-                                     const std::string& base_frame,
-                                     const std::string& tip_frame,
-                                     double search_discretization)
+bool TMKinematicsPlugin::initialize(const moveit::core::RobotModel& robot_model,
+                                    const std::string& group_name, const std::string& base_frame,
+                                    const std::vector<std::string>& tip_frames,
+                                    double search_discretization)
+
 {
-  setValues(robot_description, group_name, base_frame, tip_frame, search_discretization);
-
-  ros::NodeHandle private_handle("~");
-  rdf_loader::RDFLoader rdf_loader(robot_description_);
-  const srdf::ModelSharedPtr &srdf = rdf_loader.getSRDF();
-  const urdf::ModelInterfaceSharedPtr &urdf_model = rdf_loader.getURDF();
-
-  if (!urdf_model || !srdf)
+  if (tip_frames.size() != 1)
   {
-    ROS_ERROR_NAMED("kdl","URDF and SRDF must be loaded for KDL kinematics solver to work.");
+    ROS_ERROR_NAMED("tm_kinematics", "Expecting exactly one tip frame.");
     return false;
   }
 
-  robot_model_.reset(new robot_model::RobotModel(urdf_model, srdf));
+  storeValues(robot_model, group_name, base_frame, tip_frames, search_discretization);
 
-  robot_model::JointModelGroup* joint_model_group = robot_model_->getJointModelGroup(group_name);
+  ros::NodeHandle private_handle("~");
+
+  const robot_model::JointModelGroup* joint_model_group = robot_model_->getJointModelGroup(group_name);
   if (!joint_model_group)
     return false;
   
@@ -226,7 +221,7 @@ bool TMKinematicsPlugin::initialize(const std::string &robot_description,
 
   KDL::Tree kdl_tree;
 
-  if (!kdl_parser::treeFromUrdfModel(*urdf_model, kdl_tree))
+  if (!kdl_parser::treeFromUrdfModel(*robot_model_->getURDF(), kdl_tree))
   {
     ROS_ERROR_NAMED("kdl","Could not initialize tree object");
     return false;
@@ -285,8 +280,6 @@ bool TMKinematicsPlugin::initialize(const std::string &robot_description,
 
   num_possible_redundant_joints_ = kdl_chain_.getNrOfJoints() - joint_model_group->getMimicJointModels().size() - (position_ik? 3:6);
 
-  // Check for mimic joints
-  bool has_mimic_joints = joint_model_group->getMimicJointModels().size() > 0;
   std::vector<unsigned int> redundant_joints_map_index;
 
   std::vector<kdl_kinematics_plugin::JointMimic> mimic_joints;
@@ -416,7 +409,7 @@ bool TMKinematicsPlugin::setRedundantJoints(const std::vector<unsigned int> &red
     ROS_ERROR_NAMED("kdl","This group cannot have redundant joints");
     return false;
   }
-  if(redundant_joints.size() > num_possible_redundant_joints_)
+  if(long(redundant_joints.size()) > num_possible_redundant_joints_)
   {
     ROS_ERROR_NAMED("kdl","This group can only have %d redundant joints", num_possible_redundant_joints_);
     return false;
@@ -607,7 +600,7 @@ bool TMKinematicsPlugin::searchPositionIK(const geometry_msgs::Pose &ik_pose,
   }
 
   KDL::JntArray jnt_seed_state(dimension_);
-  for(int i=0; i<dimension_; i++)
+  for(size_t i=0; i<dimension_; i++)
     jnt_seed_state(i) = ik_seed_state[i];
 
   solution.resize(dimension_);
@@ -670,7 +663,6 @@ bool TMKinematicsPlugin::searchPositionIK(const geometry_msgs::Pose &ik_pose,
                        jnt_pos_test(tm_joint_inds_start_+5));
     
     
-    uint16_t num_valid_sols;
     std::vector< std::vector<double> > q_ik_valid_sols;
     for(uint16_t i=0; i<num_sols; i++)
     {
@@ -803,7 +795,6 @@ bool TMKinematicsPlugin::getPositionFK(const std::vector<std::string> &link_name
                                         const std::vector<double> &joint_angles,
                                         std::vector<geometry_msgs::Pose> &poses) const
 {
-  ros::WallTime n1 = ros::WallTime::now();
   if(!active_)
   {
     ROS_ERROR_NAMED("kdl","kinematics not active");
