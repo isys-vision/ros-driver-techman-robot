@@ -216,6 +216,7 @@ int TmCommunication::connectWithTimeout(int sock, const char* ip, const char* po
       return -1;
     }
   }
+  return 0;
 }
 
 bool TmCommunication::connectToServer() {
