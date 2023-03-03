@@ -1,9 +1,6 @@
 cmake_minimum_required(VERSION 2.8.3)
 project(tm700_gripper_test)
 
-## Compile as C++11, supported in ROS Kinetic and newer
-add_compile_options(-std=c++11)
-
 add_definitions( -DROS_BUILD )
 
 ## Find catkin macros and libraries

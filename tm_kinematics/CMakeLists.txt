@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 2.8.3)
 project(tm_kinematics)
 
-add_compile_options(-std=c++11 -Werror -Wall -Wextra -Wno-unused-parameter)
+add_compile_options(-Werror -Wall -Wextra -Wno-unused-parameter)
 
 find_package(catkin REQUIRED COMPONENTS 
   roscpp geometry_msgs moveit_core moveit_ros_planning moveit_kinematics pluginlib tf_conversions
