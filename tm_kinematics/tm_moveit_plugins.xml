@@ -22,11 +22,18 @@
   </class>
 </library>
 
-
 <library path="lib/libtm1300_moveit_plugin">
   <class name="tm1300_kinematics/TM1300KinematicsPlugin" type="tm_kinematics::TMKinematicsPlugin" base_class_type="kinematics::KinematicsBase">
     <description>
       Analytic kinematics for the Techman Robot TM1300.
+    </description>
+  </class>
+</library>
+
+<library path="lib/libtm12s_moveit_plugin">
+  <class name="tm12s_kinematics/TM12SKinematicsPlugin" type="tm_kinematics::TMKinematicsPlugin" base_class_type="kinematics::KinematicsBase">
+    <description>
+      Analytic kinematics for the Techman Robot TM12S.
     </description>
   </class>
 </library>

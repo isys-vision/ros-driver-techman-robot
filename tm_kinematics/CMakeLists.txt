@@ -10,7 +10,7 @@ find_package(catkin REQUIRED COMPONENTS
 
 catkin_package(
   INCLUDE_DIRS include
-  LIBRARIES tm700_kin tm900_kin tm700_moveit_plugin tm900_moveit_plugin tm1100_kin tm1300_kin tm1100_moveit_plugin tm1300_moveit_plugin
+  LIBRARIES tm700_kin tm900_kin tm700_moveit_plugin tm900_moveit_plugin tm1100_kin tm1300_kin tm1100_moveit_plugin tm1300_moveit_plugin tm12s_moveit_plugin
   CATKIN_DEPENDS roscpp geometry_msgs moveit_core moveit_ros_planning moveit_kinematics pluginlib tf_conversions
 )
 
@@ -32,6 +32,9 @@ set_target_properties(tm1100_kin PROPERTIES COMPILE_DEFINITIONS "TM1100_DH_PARAM
 
 add_library(tm1300_kin src/tm_kin.cpp)
 set_target_properties(tm1300_kin PROPERTIES COMPILE_DEFINITIONS "TM1300_DH_PARAMS")
+
+add_library(tm12s_kin src/tm_kin.cpp)
+set_target_properties(tm12s_kin PROPERTIES COMPILE_DEFINITIONS "TM12S_DH_PARAMS")
 
 add_library(tm700_moveit_plugin src/tm_moveit_plugin.cpp)
 set_target_properties(tm700_moveit_plugin PROPERTIES COMPILE_DEFINITIONS "TM700_DH_PARAMS")
@@ -57,12 +60,19 @@ target_link_libraries(tm1300_moveit_plugin
   ${catkin_LIBRARIES}
   tm1300_kin)
 
+add_library(tm12s_moveit_plugin src/tm_moveit_plugin.cpp)
+set_target_properties(tm12s_moveit_plugin PROPERTIES COMPILE_DEFINITIONS "TM12S_DH_PARAMS")
+target_link_libraries(tm12s_moveit_plugin
+  ${catkin_LIBRARIES}
+  tm12s_kin)
+
 #############
 ## Install ##
 #############
 
 install(TARGETS tm700_kin tm900_kin tm700_moveit_plugin tm900_moveit_plugin
   tm1100_kin tm1300_kin tm1100_moveit_plugin tm1300_moveit_plugin
+  tm12s_kin tm12s_moveit_plugin
   ARCHIVE DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
   LIBRARY DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
   RUNTIME DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}

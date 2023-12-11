@@ -70,6 +70,14 @@ namespace tm_kinematics {
 		const double d5 =  0.1060;
 		const double d6 =  0.11315;
 #endif
+#ifdef TM12S_DH_PARAMS
+		const double d1 =  0.1652;
+		const double a2 =  0.6361;
+		const double a3 =  0.5324;
+		const double d4 = -0.1818;
+		const double d5 =  0.1315;
+		const double d6 =  0.13455;
+#endif
 		double IkDistTOL = 0.00000001;
 		double IkAngTOL  = 0.00000001;
 
