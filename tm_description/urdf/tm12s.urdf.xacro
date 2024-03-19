@@ -1,0 +1,339 @@
+<?xml version="1.0"?>
+<robot xmlns:xacro="http://www.ros.org/wiki/xacro">
+
+  <!-- Kinematic model -->
+  <!-- Properties from tmcontrol.conf -->
+  <!--
+    DH for TM1300:
+    a = [0.00000, 0.6361, 0.5579,  0.00000,  0.00000,  0.0000]
+    d = [0.1652,  0.00000,  0.00000,  -0.1563,  0.106,  0.11315]
+    alpha = [ -1.570796327, 0, 0, 1.570796327, 1.570796327, 0 ]
+    q_home_offset = [0, -1.570796327, 0, 1.570796327, 0, 0]
+    joint_direction = [-1, -1, 1, -1, 1, 1]
+    mass = [4.5, 10.5, 2.1, 1.45, 1.45, 0.4]
+    center_of_mass = [ [0, -0.02561, 0.00193], [0.2125, 0, 0.11336], [0.11993, 0.0, 0.0265], [0, -0.0018, 0.01634], [0, 0.0018,0.01634], [0, 0, -0.001159] ]
+  -->
+  <xacro:property name="tm_d1" value="0.1652" />
+  <xacro:property name="tm_a2" value="0.6361" />
+
+  <!-- offsets for shoulder/elbow joints -->
+
+  <!-- link lengths used in model -->
+  <xacro:property name="shoulder_height" value="${tm_d1}" />
+  <xacro:property name="shoulder_offset" value="-0.183" />
+  <xacro:property name="arm_1_length" value="${tm_a2}" />
+  <xacro:property name="elbow_offset" value="0.1327" />
+  <xacro:property name="arm_2_length" value="0.5324" />
+  <xacro:property name="wrist_2_offset" value="0.1315" />
+  <xacro:property name="wrist_2_length" value="0.1315" />
+  <xacro:property name="wrist_3_length" value="0.13455" />
+
+
+  <xacro:macro name="tm12s_robot" params="prefix joint_limited has_camera">
+    <link name="${prefix}base_link" >
+        <visual>
+        <geometry>
+            <mesh filename="package://tm_description/meshes/tm12s/visual/tm12s-base.stl" />
+        </geometry>
+        <material name="Grey">
+          <color rgba="0.5 0.5 0.5 1.0"/>
+        </material>
+        </visual>
+        <!--collision>
+        <geometry>
+            <mesh filename="package://tm_description/meshes/tm12s/collision/tm12s-base.obj" />
+        </geometry>
+        </collision-->
+        <collision>
+            <geometry>
+                <cylinder length="0.07" radius="0.105" />
+            </geometry>
+            <origin xyz="0 0 0.035" rpy="0 0 0" />
+        </collision>
+    </link>
+
+    <link name="${prefix}shoulder_1_link">
+        <visual>
+        <geometry>
+            <mesh filename="package://tm_description/meshes/tm12s/visual/tm12s-j1.stl" />
+        </geometry>
+            <material name="DarkOlive">
+            <color rgba="0.3 0.3 0.25 1.0"/>
+            </material>
+        </visual>
+        <!--collision>
+        <geometry>
+            <mesh filename="package://tm_description/meshes/tm12s/collision/tm12s-j1.obj" />
+        </geometry>
+        </collision-->
+        <collision>
+            <geometry>
+                <cylinder length="0.22" radius="0.085" />
+            </geometry>
+            <origin xyz="0 0 -0.11" rpy="0 0 0" />
+        </collision>
+        <collision>
+            <geometry>
+                <cylinder length="0.22" radius="0.085" />
+            </geometry>
+            <origin xyz="0 0 0" rpy="${-0.5*pi} 0 0" />
+        </collision>   <!-- multiple collision elements, allowed, assistant? -->
+    </link>
+
+    <joint name="${prefix}shoulder_1_joint" type="revolute">
+      <parent link="${prefix}base_link" />
+      <child link = "${prefix}shoulder_1_link" />
+      <origin xyz="0.0 0.0 ${shoulder_height}" rpy="${-0.5 * pi} 0.0 0.0" />
+      <axis xyz="0 -1 0" />
+      <xacro:unless value="${joint_limited}">
+        <limit lower="${radians(-360)}" upper="${radians(360)}" effort="150.0" velocity="${radians(130)}"/>
+      </xacro:unless>
+      <xacro:if value="${joint_limited}">
+        <limit lower="${radians(-180)}" upper="${radians(180)}" effort="150.0" velocity="${radians(130)}"/>
+      </xacro:if>
+    </joint>
+
+    <link name="${prefix}arm_1_link">
+        <visual>
+            <geometry>
+                <mesh filename="package://tm_description/meshes/tm12s/visual/tm12s-a1.stl" />
+            </geometry>
+            <origin xyz="0 0 0" rpy="${pi} 0 0" /> <!-- TODO rotate mesh -->
+            <material name="DarkOlive">
+                <color rgba="0.3 0.3 0.25 1.0"/>
+            </material>
+        </visual>
+        <!--collision>
+        <geometry>
+            <mesh filename="package://tm_description/meshes/tm12s/collision/tm12s-a1.obj" />
+        </geometry>
+        </collision-->
+        <collision>
+            <geometry>
+                <cylinder length="0.205" radius="0.085" />
+            </geometry>
+            <origin xyz="0 0 0" rpy="0 0 0" />
+        </collision>
+        <collision>
+            <geometry>
+                <cylinder length="0.6361" radius="0.076" />
+            </geometry>
+            <origin xyz="0.31805 0 0" rpy="0 ${0.5*pi} 0" />
+        </collision>
+        <collision>
+            <geometry>
+                <cylinder length="0.18" radius="0.075" />
+            </geometry>
+            <origin xyz="0.6361 0 0" rpy="0 0 0" />
+        </collision>
+    </link>
+
+    <joint name="${prefix}shoulder_2_joint" type="revolute">
+      <parent link="${prefix}shoulder_1_link" />
+      <child link = "${prefix}arm_1_link" />
+      <origin xyz="0.0 0.0 ${shoulder_offset}" rpy="0.0 0.0 ${-0.5 * pi}" />
+      <axis xyz="0 0 1" />
+      <xacro:unless value="${joint_limited}">
+        <limit lower="${radians(-360)}" upper="${radians(360)}" effort="150.0" velocity="${radians(130)}"/>
+      </xacro:unless>
+      <xacro:if value="${joint_limited}">
+        <limit lower="${radians(-180)}" upper="${radians(180)}" effort="150.0" velocity="${radians(130)}"/>
+      </xacro:if>
+    </joint>
+
+    <link name="${prefix}arm_2_link">
+        <visual>
+        <geometry>
+            <mesh filename="package://tm_description/meshes/tm12s/visual/tm12s-a2.stl" />
+        </geometry>
+            <origin xyz="0 0 0" rpy="${pi} 0 0" /> <!-- TODO rotate mesh -->
+            <material name="DarkOlive">
+                <color rgba="0.3 0.3 0.25 1.0"/>
+            </material>
+        </visual>
+        <!--collision>
+        <geometry>
+            <mesh filename="package://tm_description/meshes/tm12s/collision/tm12s-a2.obj" />
+        </geometry>
+        </collision-->
+        <collision>
+        <geometry>
+            <cylinder length="0.09" radius="0.075" />
+        </geometry>
+        <origin xyz="0 0 0" rpy="0 0 0" />
+        </collision>
+        <collision>
+        <geometry>
+            <cylinder length="0.5324" radius="0.045" />
+        </geometry>
+        <origin xyz="0.2662 0 0" rpy="0 ${0.5*pi} 0" />
+        </collision>
+        <collision>
+        <geometry>
+            <cylinder length="0.131" radius="0.047" />
+        </geometry>
+        <origin xyz="0.5324 0 0" rpy="0 0 0" />
+        </collision>
+    </link>
+
+    <joint name="${prefix}elbow_1_joint" type="revolute">
+      <parent link="${prefix}arm_1_link" />
+      <child link = "${prefix}arm_2_link" />
+      <origin xyz="${arm_1_length} 0.0 ${elbow_offset}" rpy="0.0 0.0 0.0" />
+      <axis xyz="0 0 1" />
+        <limit lower="${radians(-162)}" upper="${radians(162)}" effort="150.0" velocity="${radians(210)}"/>
+    </joint>
+
+    <link name="${prefix}wrist_1_link">
+        <visual>
+        <geometry>
+            <mesh filename="package://tm_description/meshes/tm5s/visual/tm5s-j5.stl" />
+        </geometry>
+            <origin xyz="0 0 0" rpy="${pi} 0 0" /> <!-- TODO rotate mesh -->
+            <material name="DarkOlive">
+                <color rgba="0.3 0.3 0.25 1.0"/>
+            </material>
+        </visual>
+        <!--collision>
+        <geometry>
+            <mesh filename="package://tm_description/meshes/tm5s/collision/tm5s-j5.obj" />
+        </geometry>
+        </collision-->
+        <collision>
+        <geometry>
+            <cylinder length="0.116" radius="0.047" />
+        </geometry>
+        <origin xyz="0 0.01 0" rpy="${0.5*pi} 0 0" />
+        </collision>
+    </link>
+
+    <joint name="${prefix}wrist_1_joint" type="revolute">
+      <parent link="${prefix}arm_2_link" />
+      <child link = "${prefix}wrist_1_link" />
+      <origin xyz="${arm_2_length} 0.0 ${- wrist_2_offset}" rpy="${0.5 * pi} 0.0 ${0.5 * pi}" />
+      <axis xyz="0 1 0" />
+      <xacro:unless value="${joint_limited}">
+        <limit lower="${radians(-360)}" upper="${radians(360)}" effort="28.0" velocity="${radians(225)}"/>
+      </xacro:unless>
+      <xacro:if value="${joint_limited}">
+        <limit lower="${radians(-180)}" upper="${radians(180)}" effort="28.0" velocity="${radians(225)}"/>
+      </xacro:if>
+    </joint>
+
+    <link name="${prefix}wrist_2_link">
+        <visual>
+        <geometry>
+            <mesh filename="package://tm_description/meshes/tm5s/visual/tm5s-j6.stl" />
+        </geometry>
+            <origin xyz="0 0 0" rpy="${pi} 0 0" /> <!-- TODO rotate mesh -->
+            <material name="DarkOlive">
+                <color rgba="0.3 0.3 0.25 1.0"/>
+            </material>
+        </visual>
+        <!--collision>
+        <geometry>
+            <mesh filename="package://tm_description/meshes/tm5s/collision/tm5s-j6.obj" />
+        </geometry>
+        </collision-->
+        <collision>
+        <geometry>
+            <cylinder length="${wrist_3_length}" radius="0.047" />
+        </geometry>
+        <origin xyz="0 0 0.004" rpy="0 0 0" />
+        </collision>
+        <collision>
+        <geometry>
+            <cylinder length="0.200" radius="0.047" />
+        </geometry>
+        <origin xyz="0 -0.095 0" rpy="${0.5*pi} 0 0" />
+        </collision>
+    </link>
+
+    <joint name="${prefix}wrist_2_joint" type="revolute">
+      <parent link="${prefix}wrist_1_link" />
+      <child link = "${prefix}wrist_2_link" />
+      <origin xyz="0.0 0.0 ${wrist_2_length}" rpy="${0.5 * pi} 0.0 0.0" />
+      <axis xyz="0 1 0" />
+      <xacro:unless value="${joint_limited}">
+        <limit lower="${radians(-360)}" upper="${radians(360)}" effort="28.0" velocity="${radians(225)}"/>
+      </xacro:unless>
+      <xacro:if value="${joint_limited}">
+        <limit lower="${radians(-180)}" upper="${radians(180)}" effort="28.0" velocity="${radians(225)}"/>
+      </xacro:if>
+    </joint>
+
+    <link name="${prefix}wrist_3_link">
+        <visual>
+        <geometry>
+          <xacro:if value="${has_camera}">
+            <mesh filename="package://tm_description/meshes/tm5s/visual/tm5s-io.stl" />
+          </xacro:if>
+          <xacro:unless value="${has_camera}">
+            <mesh filename="package://tm_description/meshes/tm5s/visual/tm5s-iox.stl" />
+          </xacro:unless>
+        </geometry>
+            <origin xyz="0 0 0" rpy="${-0.5*pi} 0 0" /> <!-- TODO rotate mesh -->
+        <material name="Grey">
+          <color rgba="0.5 0.5 0.5 1.0"/>
+        </material>
+        </visual>
+        <!--collision>
+        <geometry>
+            <mesh filename="package://tm_description/meshes/tm5s/collision/tm5s-io.obj" />
+        </geometry>
+        </collision-->
+        <collision>
+        <geometry>
+            <cylinder length="0.065" radius="0.047" />
+        </geometry>
+        <origin xyz="0 0 -0.031" rpy="0 0 0" />
+        </collision>
+        <xacro:if value="${has_camera}">
+            <collision>
+            <geometry>
+                <box size="0.076 0.064 0.12" />
+            </geometry>
+            <origin xyz="0 0.074 -0.008" rpy="0 0 0" />
+            </collision>
+        </xacro:if>
+    </link>
+
+    <joint name="${prefix}wrist_3_joint" type="revolute">
+      <parent link="${prefix}wrist_2_link" />
+      <child link = "${prefix}wrist_3_link" />
+      <origin xyz="0.0 0.0 ${wrist_3_length}" rpy="0.0 0.0 0.0" />
+      <axis xyz="0 0 1" />
+      <xacro:unless value="${joint_limited}">
+        <limit lower="${radians(-360)}" upper="${radians(360)}" effort="28.0" velocity="${radians(450)}"/>
+      </xacro:unless>
+      <xacro:if value="${joint_limited}">
+        <limit lower="${radians(-180)}" upper="${radians(180)}" effort="28.0" velocity="${radians(450)}"/>
+      </xacro:if>
+    </joint>
+
+    <!-- ROS base to TM 'base_link' Coordinates transform -->
+    <link name="${prefix}base"/>
+    <joint name="${prefix}base-base_link" type="fixed">
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <parent link="${prefix}base_link"/>
+      <child link="${prefix}base"/>
+    </joint>
+
+    <!-- ROS-Industrial 'flange' frame: attachment point for EEF models -->
+    <link name="${prefix}flange"/>
+    <joint name="${prefix}wrist_3-flange" type="fixed">
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <parent link="${prefix}wrist_3_link"/>
+      <child link="${prefix}flange"/>
+    </joint>
+
+    <!-- ROS-Industrial 'tool0' frame: all-zeros tool frame -->
+    <link name="${prefix}tool0"/>
+    <joint name="${prefix}flange-tool0" type="fixed">
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <parent link="${prefix}flange"/>
+      <child link="${prefix}tool0"/>
+    </joint>
+
+  </xacro:macro>
+</robot>
