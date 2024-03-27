@@ -125,8 +125,8 @@ protected:
 public:
   TmRosWrapper(std::string host):
   as_(nh_, "joint_trajectory_action", 
-      boost::bind(&TmRosWrapper::goalCB, this, _1),
-      boost::bind(&TmRosWrapper::cancelCB, this, _1),
+      boost::bind(&TmRosWrapper::goalCB, this, boost::placeholders::_1),
+      boost::bind(&TmRosWrapper::cancelCB, this, boost::placeholders::_1),
       false
      )//,
   //robot(msg_condv, msg_condv_rt, host, 0)
