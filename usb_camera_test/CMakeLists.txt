@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 2.8.3)
+cmake_minimum_required(VERSION 3.22.0)
 project(usb_camera_test)
 
 add_definitions( -DROS_BUILD )
