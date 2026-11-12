@@ -137,6 +137,11 @@ namespace tm_kinematics
 */
     TMKinematicsPlugin();
 
+    // Newer MoveIt versions add additional multi-pose overloads for searchPositionIK() to the base class;
+    // this declaration here re-exposes these base overloads, otherwise they are hidden by the overloads below,
+    // which is flagged as a compile error.
+    using kinematics::KinematicsBase::searchPositionIK;
+
     virtual bool getPositionIK(const geometry_msgs::Pose &ik_pose,
                                const std::vector<double> &ik_seed_state,
                                std::vector<double> &solution,
