@@ -25,7 +25,7 @@
 
     <transmission name="${prefix}trans_3">
       <type>transmission_interface/SimpleTransmission</type>
-      <joint name="${prefix}elbow_joint">
+      <joint name="${prefix}elbow_1_joint">
         <hardwareInterface>${hw_iface}</hardwareInterface>
       </joint>
       <actuator name="${prefix}motor_3">

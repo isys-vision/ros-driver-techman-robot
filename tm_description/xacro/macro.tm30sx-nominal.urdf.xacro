@@ -3,22 +3,22 @@
 
   <xacro:include filename="$(find tm_description)/xacro/macro.inertial.xacro" />
 
-  <xacro:macro name="tm30sx" params="ns prefix color:=none format:=obj
+  <xacro:macro name="tm30sx" params="prefix color:=none format:=obj
     shoulder_1_joint_lower_limit:=${radians(-360)}    shoulder_1_joint_upper_limit:=${radians(360)}
     shoulder_2_joint_lower_limit:=${radians(-360)}    shoulder_2_joint_upper_limit:=${radians(360)}
-    elbow_joint_lower_limit:=${radians(-170)}    elbow_joint_upper_limit:=${radians(170)}
+    elbow_1_joint_lower_limit:=${radians(-170)}    elbow_1_joint_upper_limit:=${radians(170)}
     wrist_1_joint_lower_limit:=${radians(-360)}    wrist_1_joint_upper_limit:=${radians(360)}
     wrist_2_joint_lower_limit:=${radians(-360)}    wrist_2_joint_upper_limit:=${radians(360)}
     wrist_3_joint_lower_limit:=${radians(-360)}    wrist_3_joint_upper_limit:=${radians(360)}
     shoulder_1_joint_velocity_limit:=${radians(100)}
     shoulder_2_joint_velocity_limit:=${radians(100)}
-    elbow_joint_velocity_limit:=${radians(130)}
+    elbow_1_joint_velocity_limit:=${radians(130)}
     wrist_1_joint_velocity_limit:=${radians(195)}
     wrist_2_joint_velocity_limit:=${radians(210)}
     wrist_3_joint_velocity_limit:=${radians(225)}
     shoulder_1_joint_effort_limit:=${1070}
     shoulder_2_joint_effort_limit:=${1070}
-    elbow_joint_effort_limit:=${459}
+    elbow_1_joint_effort_limit:=${459}
     wrist_1_joint_effort_limit:=${304}
     wrist_2_joint_effort_limit:=${157}
     wrist_3_joint_effort_limit:=${54}
@@ -150,15 +150,15 @@
       <inertia ixx="${ixx_2}" ixy="0.000000" ixz="0.000000" iyy="${iyy_2}" iyz="0.000000" izz="${izz_2}" />
     </inertial>
   </link>
-  <joint name="${prefix}elbow_joint" type="revolute">
+  <joint name="${prefix}elbow_1_joint" type="revolute">
     <parent link="${prefix}link_2" />
     <child link="${prefix}link_3" />
     <origin rpy="0.000000 0.000000 1.570796" xyz="0.890000 0.000000 -0.070000" />
     <axis xyz="0 0 1" />
 <!--limit-->
-    <limit lower="${elbow_joint_lower_limit}" upper="${elbow_joint_upper_limit}" velocity="${elbow_joint_velocity_limit}" effort="${elbow_joint_effort_limit}" />
+    <limit lower="${elbow_1_joint_lower_limit}" upper="${elbow_1_joint_upper_limit}" velocity="${elbow_1_joint_velocity_limit}" effort="${elbow_1_joint_effort_limit}" />
     <xacro:if value="${safety_limits}">
-      <safety_controller soft_lower_limit="${elbow_joint_lower_limit + safety_pos_margin}" soft_upper_limit="${elbow_joint_upper_limit - safety_pos_margin}" k_position="${safety_k_position}" k_velocity="0.0" />
+      <safety_controller soft_lower_limit="${elbow_1_joint_lower_limit + safety_pos_margin}" soft_upper_limit="${elbow_1_joint_upper_limit - safety_pos_margin}" k_position="${safety_k_position}" k_velocity="0.0" />
     </xacro:if>
     <dynamics damping="${d3}" friction="${f3}" />
   </joint>
@@ -272,12 +272,18 @@
   </link>
   <joint name="${prefix}flange_fixed_joint" type="fixed">
     <parent link="${prefix}link_6" />
-    <child link="${prefix}flange_link" />
+    <child link="${prefix}flange" />
     <origin rpy="0.000000 0.000000 0.000000" xyz="0.000000 0.000000 0.000000" />
   </joint>
 
-  <link name="${prefix}flange_link" />
+  <link name="${prefix}flange" />
 
+  <link name="${prefix}base_link" />
+  <joint name="${prefix}base_link-base_fixed_joint" type="fixed">
+    <parent link="${prefix}base_link" />
+    <child link="${prefix}base" />
+    <origin rpy="0.000000 0.000000 0.000000" xyz="0.000000 0.000000 0.000000" />
+  </joint>
   <link name="${prefix}base" />
   <joint name="${prefix}base_fixed_joint" type="fixed">
     <parent link="${prefix}base" />
@@ -285,8 +291,8 @@
     <origin rpy="0.000000 0.000000 0.000000" xyz="0.000000 0.000000 0.000000" />
   </joint>
   <link name="${prefix}tool0" />
-  <joint name="${prefix}flange_link-tool0" type="fixed">
-    <parent link="${prefix}flange_link" />
+  <joint name="${prefix}flange-tool0" type="fixed">
+    <parent link="${prefix}flange" />
     <child link="${prefix}tool0" />
     <origin rpy="0.000000 0.000000 0.000000" xyz="0.000000 0.000000 0.000000" />
   </joint>

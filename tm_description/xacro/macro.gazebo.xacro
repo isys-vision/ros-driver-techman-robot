@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <robot xmlns:xacro="http://www.ros.org/wiki/xacro">
 
-  <xacro:macro name="tmr_gazebo" params="ns prefix">
+  <xacro:macro name="tmr_gazebo" params="prefix">
 
     <gazebo reference="${prefix}link_1">
       <selfCollide>true</selfCollide>
@@ -24,7 +24,6 @@
 
     <gazebo>
       <plugin name="gazebo_ros_control" filename="libgazebo_ros_control.so">
-        <robotNamespace>/${ns}</robotNamespace>
         <robotSimType>gazebo_ros_control/DefaultRobotHWSim</robotSimType>
       </plugin>
     </gazebo>
