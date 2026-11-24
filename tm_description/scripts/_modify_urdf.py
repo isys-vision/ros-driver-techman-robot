@@ -167,14 +167,29 @@ def pretty_xml(element, indent, newline, level=0):
 
 
 def modify_urdf(root, xyzs, rpys, udh, prefix=''):
+    # hardcoded joint names expected in the xacro (prefix will be prepended)
+    expected_joints = [
+        'base_fixed_joint',
+        'shoulder_1_joint',
+        'shoulder_2_joint',
+        'elbow_1_joint',
+        'wrist_1_joint',
+        'wrist_2_joint',
+        'wrist_3_joint',
+        'flange_fixed_joint',
+    ]
+    found_joints = set()
+
     for elem in root.findall('joint'):
         for index in elem.attrib:
             if index == 'name' and elem.attrib[index] == prefix + 'base_fixed_joint':
+                found_joints.add('base_fixed_joint')
                 origin = elem.find('origin')
                 origin.attrib['xyz'] = '0.0 0.0 0.0'
                 origin.attrib['rpy'] = '0.0 0.0 0.0'
 
             elif index == 'name' and elem.attrib[index] == prefix + 'shoulder_1_joint':
+                found_joints.add('shoulder_1_joint')
                 origin = elem.find('origin')
                 origin.attrib['xyz'] = str_from_nparray(np.round(xyzs[0, :], 8))
                 origin.attrib['rpy'] = str_from_nparray(np.round(rpys[0, :], 8))
@@ -183,6 +198,7 @@ def modify_urdf(root, xyzs, rpys, udh, prefix=''):
                 # limit.attrib['upper'] = str(np.round(udh[0, _ULIM], 4))
 
             elif index == 'name' and elem.attrib[index] == prefix + 'shoulder_2_joint':
+                found_joints.add('shoulder_2_joint')
                 origin = elem.find('origin')
                 origin.attrib['xyz'] = str_from_nparray(np.round(xyzs[1, :], 8))
                 origin.attrib['rpy'] = str_from_nparray(np.round(rpys[1, :], 8))
@@ -190,7 +206,8 @@ def modify_urdf(root, xyzs, rpys, udh, prefix=''):
                 # limit.attrib['lower'] = str(np.round(udh[1, _LLIM], 4))
                 # limit.attrib['upper'] = str(np.round(udh[1, _ULIM], 4))
 
-            elif index == 'name' and elem.attrib[index] == prefix + 'elbow_joint':
+            elif index == 'name' and elem.attrib[index] == prefix + 'elbow_1_joint':
+                found_joints.add('elbow_1_joint')
                 origin = elem.find('origin')
                 origin.attrib['xyz'] = str_from_nparray(np.round(xyzs[2, :], 8))
                 origin.attrib['rpy'] = str_from_nparray(np.round(rpys[2, :], 8))
@@ -199,6 +216,7 @@ def modify_urdf(root, xyzs, rpys, udh, prefix=''):
                 # limit.attrib['upper'] = str(np.round(udh[2, _ULIM], 4))
 
             elif index == 'name' and elem.attrib[index] == prefix + 'wrist_1_joint':
+                found_joints.add('wrist_1_joint')
                 origin = elem.find('origin')
                 origin.attrib['xyz'] = str_from_nparray(np.round(xyzs[3, :], 8))
                 origin.attrib['rpy'] = str_from_nparray(np.round(rpys[3, :], 8))
@@ -207,6 +225,7 @@ def modify_urdf(root, xyzs, rpys, udh, prefix=''):
                 # limit.attrib['upper'] = str(np.round(udh[3, _ULIM], 4))
 
             elif index == 'name' and elem.attrib[index] == prefix + 'wrist_2_joint':
+                found_joints.add('wrist_2_joint')
                 origin = elem.find('origin')
                 origin.attrib['xyz'] = str_from_nparray(np.round(xyzs[4, :], 8))
                 origin.attrib['rpy'] = str_from_nparray(np.round(rpys[4, :], 8))
@@ -215,6 +234,7 @@ def modify_urdf(root, xyzs, rpys, udh, prefix=''):
                 # limit.attrib['upper'] = str(np.round(udh[4, _ULIM], 4))
 
             elif index == 'name' and elem.attrib[index] == prefix + 'wrist_3_joint':
+                found_joints.add('wrist_3_joint')
                 origin = elem.find('origin')
                 origin.attrib['xyz'] = str_from_nparray(np.round(xyzs[5, :], 8))
                 origin.attrib['rpy'] = str_from_nparray(np.round(rpys[5, :], 8))
@@ -223,8 +243,16 @@ def modify_urdf(root, xyzs, rpys, udh, prefix=''):
                 # limit.attrib['upper'] = str(np.round(udh[5, _ULIM], 4))
 
             elif index == 'name' and elem.attrib[index] == prefix + 'flange_fixed_joint':
+                found_joints.add('flange_fixed_joint')
                 origin = elem.find('origin')
                 origin.attrib['xyz'] = str_from_nparray(np.round(xyzs[6, :], 8))
                 origin.attrib['rpy'] = str_from_nparray(np.round(rpys[6, :], 8))
+
+    missing_joints = [j for j in expected_joints if j not in found_joints]
+    if missing_joints:
+        print('WARNING: modify_urdf: the following hardcoded joint names were not found in the xacro'
+              ' (their kinematic values were NOT updated):')
+        for joint in missing_joints:
+            print('WARNING: modify_urdf: missing joint: ' + prefix + joint)
 
     pretty_xml(root, '  ', '\n')
