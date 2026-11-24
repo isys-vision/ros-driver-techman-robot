@@ -29,7 +29,13 @@ find_package(catkin REQUIRED COMPONENTS
 ## System dependencies are found with CMake's conventions
 # find_package(Boost REQUIRED COMPONENTS system)
 if(BOOST_FLAG)
-find_package(Boost REQUIRED COMPONENTS system thread chrono)
+  # CMake >= 4 removed the FindBoost module (CMP0167); Boost is resolved via
+  # its own config files instead. Boost.System is header-only since 1.69 and
+  # ships no component config anymore, so it must not be requested.
+  if(POLICY CMP0167)
+    cmake_policy(SET CMP0167 NEW)
+  endif()
+  find_package(Boost REQUIRED COMPONENTS thread chrono)
 endif()
 
 ## Uncomment this if the package has a setup.py. This macro ensures
@@ -157,6 +163,7 @@ endif()
 # include_directories(include)
 include_directories(include
   ${catkin_INCLUDE_DIRS}
+  ${Boost_INCLUDE_DIRS}
 )
 
 ## Declare a C++ library
