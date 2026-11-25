@@ -78,7 +78,9 @@
       <geometry>
         <mesh filename="package://tm_description/meshes/tm25s/visual/tm25s-base.${format}" />
       </geometry>
-      <material name="${color}" />
+      <material name="${color}">
+          <color rgba="0.5 0.5 0.5 1.0" />
+        </material>
     </visual>
     <collision>
       <geometry>
@@ -107,7 +109,9 @@
       <geometry>
         <mesh filename="package://tm_description/meshes/tm25s/visual/tm25s-j1.${format}" />
       </geometry>
-      <material name="${color}" />
+      <material name="${color}">
+          <color rgba="0.5 0.5 0.5 1.0" />
+        </material>
     </visual>
     <collision>
       <geometry>
@@ -137,7 +141,9 @@
       <geometry>
         <mesh filename="package://tm_description/meshes/tm25s/visual/tm25s-a1.${format}" />
       </geometry>
-      <material name="${color}" />
+      <material name="${color}">
+          <color rgba="0.5 0.5 0.5 1.0" />
+        </material>
     </visual>
     <collision>
       <geometry>
@@ -167,7 +173,9 @@
       <geometry>
         <mesh filename="package://tm_description/meshes/tm25s/visual/tm25s-j4.${format}" />
       </geometry>
-      <material name="${color}" />
+      <material name="${color}">
+          <color rgba="0.5 0.5 0.5 1.0" />
+        </material>
     </visual>
     <collision>
       <geometry>
@@ -197,7 +205,9 @@
       <geometry>
         <mesh filename="package://tm_description/meshes/tm25s/visual/tm25s-a2.${format}" />
       </geometry>
-      <material name="${color}" />
+      <material name="${color}">
+          <color rgba="0.5 0.5 0.5 1.0" />
+        </material>
     </visual>
     <collision>
       <geometry>
@@ -227,7 +237,9 @@
       <geometry>
         <mesh filename="package://tm_description/meshes/tm25s/visual/tm25s-j6.${format}" />
       </geometry>
-      <material name="${color}" />
+      <material name="${color}">
+          <color rgba="0.5 0.5 0.5 1.0" />
+        </material>
     </visual>
     <collision>
       <geometry>
@@ -257,7 +269,9 @@
       <geometry>
         <mesh filename="package://tm_description/meshes/tm25s/visual/tm25s-io.${format}" />
       </geometry>
-      <material name="${color}" />
+      <material name="${color}">
+          <color rgba="0.5 0.5 0.5 1.0" />
+        </material>
     </visual>
     <collision>
       <geometry>
